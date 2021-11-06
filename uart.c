@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <avr/io.h>
-#include "uart.h"
+
+#define BAUD 9600
 #include <util/setbaud.h>
+
+#include "uart.h"
 
 FILE _stdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 FILE _stdin = FDEV_SETUP_STREAM(NULL, uart_getchar, _FDEV_SETUP_READ);
@@ -26,14 +29,8 @@ int uart_putchar(char c, FILE *stream)
 
 int uart_getchar(FILE *stream)
 {
-    if (!stream)
+    if(!stream)   
         return EOF;
     loop_until_bit_is_set(UCSR0A, RXC0);
     return uart_putchar(UDR0, stdout);
-}
-
-void uart_puts(char *s)
-{
-    while (*s > 0)
-        uart_putchar(*s++, stdout);
 }
